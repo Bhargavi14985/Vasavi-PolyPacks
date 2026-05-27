@@ -1,0 +1,94 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // To switch to PostgreSQL, change provider to "postgresql" and update DATABASE_URL in .env
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String      @id @default(uuid())
+  email     String      @unique
+  password  String
+  name      String
+  role      String      @default("CUSTOMER") // "ADMIN" or "CUSTOMER"
+  company   String?
+  phone     String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  configs   BagConfig[]
+  quotes    Quote[]
+}
+
+model BagConfig {
+  id            String   @id @default(uuid())
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bagType       String   // "BOPP_LAMINATED", "PP_WOVEN", "BOX_BOTTOM", "GUSSETED_SACK"
+  color         String   // Hex code, e.g. "#ffffff"
+  logoUrl       String?  // Client uploaded logo path or mock URL
+  logoScale     Float    @default(1.0)
+  textFront     String?
+  textBack      String?
+  width         Int      // cm
+  height        Int      // cm
+  gusset        Int      // cm
+  features      String   // JSON array of selected extras, e.g. '["handles", "liner"]'
+  printingStyle String   // "FLEXO", "GRAVURE", "NONE"
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  quotes        Quote[]
+}
+
+model Quote {
+  id                 String     @id @default(uuid())
+  userId             String?
+  user               User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  name               String
+  email              String
+  phone              String
+  company            String?
+  quantity           Int
+  materialType       String     // "BOPP_LAMINATED", "PP_WOVEN", "KRAFT_PAPER", "HDPE"
+  dimensions         String     // e.g. "50x80x10 cm"
+  printingColors     Int        // Number of colors (0 to 8)
+  bagSpecs           String     // JSON containing density (GSM), liner type, etc.
+  estimatedMinPrice  Float
+  estimatedMaxPrice  Float
+  status             String     @default("PENDING") // "PENDING", "REVIEWED", "CONVERTED", "CLOSED"
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  bagConfigId        String?
+  bagConfig          BagConfig? @relation(fields: [bagConfigId], references: [id], onDelete: SetNull)
+  orders             Order[]
+}
+
+model Lead {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  phone     String
+  company   String?
+  message   String?
+  type      String   @default("CONTACT") // "CONTACT", "CALLBACK", "EXPORT"
+  status    String   @default("NEW")     // "NEW", "CONTACTED", "ARCHIVED"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id              String   @id @default(uuid())
+  quoteId         String
+  quote           Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  orderNumber     String   @unique
+  totalQuantity   Int
+  status          String   @default("PENDING") // "PENDING", "PLATES_DESIGN", "EXTRUSION", "WEAVING", "PRINTING", "LAMINATION", "STITCHING", "QUALITY_CHECK", "DISPATCHED"
+  estDeliveryDate DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
