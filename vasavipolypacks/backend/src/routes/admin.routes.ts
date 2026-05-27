@@ -12,7 +12,6 @@ import { requireAdmin } from '../middleware/auth';
 
 const router = Router();
 
-// Secure all admin routes with requireAdmin middleware
 router.use(requireAdmin);
 
 router.get('/metrics', getDashboardMetrics);

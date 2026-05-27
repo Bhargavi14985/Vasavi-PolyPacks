@@ -6,7 +6,6 @@ import jwt from 'jsonwebtoken';
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'vasavi_polypacks_ultra_secret_key_for_jwt_auth_2026';
 
-// Helper to calculate pricing
 export const calculatePricingDetails = (data: {
   bagType: string;
   width: number;
@@ -21,72 +20,56 @@ export const calculatePricingDetails = (data: {
 }) => {
   const { bagType, width, height, gusset, quantity, printingColors, gsm, liner, handles, perforations } = data;
 
-  // 1. Calculate Area & Weight
-  // Total circumference width is (width + gusset) * 2
   const widthMeters = ((width + gusset) * 2) / 100;
   const heightMeters = height / 100;
   const areaSqMeters = widthMeters * heightMeters;
   
-  // Fabric weight per bag in grams
   const bagWeightGrams = areaSqMeters * gsm;
   const bagWeightKg = bagWeightGrams / 1000;
 
-  // 2. Base Fabric Cost
-  // Raw PP Granules cost is roughly ₹135 per kg
   const ppRatePerKg = 135;
   let baseFabricCost = bagWeightKg * ppRatePerKg;
 
-  // 3. Add Premium Material adjustments
-  if (bagType === 'BOX_BOTTOM') {
-    baseFabricCost *= 1.15; // 15% structural complexity charge
+  const isBoxBottom = bagType === 'BOX_BOTTOM' || bagType === 'CEM_BAG';
+  if (isBoxBottom) {
+    baseFabricCost *= 1.15;
   }
 
-  // 4. Lamination Cost
+  const isBOPP = ['BOPP_LAMINATED', 'RICE_BAG', 'DAL_BAG', 'FLOUR_BAG', 'CEM_BAG', 'GENERAL_PACKAGING'].includes(bagType);
   let laminationCost = 0;
-  if (bagType === 'BOPP_LAMINATED') {
-    // Gravure lamination adds roughly ₹12 per sq. meter (BOPP Film + Glue)
+  if (isBOPP) {
     laminationCost = areaSqMeters * 12;
   }
 
-  // 5. Printing Cost
-  // Ink cost: ₹0.35 per color per bag
   const printingInkCost = printingColors * 0.35;
   
-  // One-time cylinder/plate engraving setup fee (B2B standard)
-  // Flexo plates = ₹2,500/color, Gravure cylinders = ₹5,500/color
-  const setupFeePerColor = bagType === 'BOPP_LAMINATED' ? 5500 : 2500;
+  const setupFeePerColor = isBOPP ? 5500 : 2500;
   const cylinderSetupFee = printingColors * setupFeePerColor;
 
-  // 6. Stitching & Custom Additions
-  let fabricationCost = 1.80; // base stitch cost
-  if (liner) fabricationCost += 3.50; // extra cost for PE liner insertion
-  if (handles) fabricationCost += 2.80; // heat-sealed PP handles
-  if (perforations) fabricationCost += 0.30; // perforation punching cost
+  let fabricationCost = 1.80;
+  if (liner) fabricationCost += 3.50;
+  if (handles) fabricationCost += 2.80;
+  if (perforations) fabricationCost += 0.30;
 
-  // 7. Base Unit Price before volume discount
   const baseUnitPrice = baseFabricCost + laminationCost + printingInkCost + fabricationCost;
 
-  // 8. Bulk Sliding Scale Volume Discount
   let discountPercentage = 0;
   if (quantity >= 100000) {
-    discountPercentage = 0.20; // 20% off
+    discountPercentage = 0.20;
   } else if (quantity >= 50000) {
-    discountPercentage = 0.15; // 15% off
+    discountPercentage = 0.15;
   } else if (quantity >= 25000) {
-    discountPercentage = 0.10; // 10% off
+    discountPercentage = 0.10;
   } else if (quantity >= 10000) {
-    discountPercentage = 0.05; // 5% off
+    discountPercentage = 0.05;
   }
 
   const finalUnitPrice = baseUnitPrice * (1 - discountPercentage);
-  const subtotal = finalUnitPrice * quantity;
   
-  // Estimated production duration in days
   let estimatedDays = 15;
   if (quantity > 100000) estimatedDays = 25;
   else if (quantity > 50000) estimatedDays = 20;
 
-  // Return formatted price objects
   const minUnitPrice = Number((finalUnitPrice * 0.95).toFixed(2));
   const maxUnitPrice = Number((finalUnitPrice * 1.05).toFixed(2));
 
@@ -114,6 +97,35 @@ export const calculatePricingDetails = (data: {
   };
 };
 
+// ── Telegram Notification Helper ─────────────────────────────────────────────
+const sendTelegramNotification = async (message: string): Promise<void> => {
+  const token  = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!token || !chatId) return;
+
+  try {
+    const https = await import('https');
+    const body = JSON.stringify({ chat_id: chatId, text: message, parse_mode: 'HTML' });
+
+    await new Promise<void>((resolve, reject) => {
+      const req = https.request(
+        {
+          hostname: 'api.telegram.org',
+          path: `/bot${token}/sendMessage`,
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
+        },
+        (res) => { res.resume(); resolve(); }
+      );
+      req.on('error', reject);
+      req.write(body);
+      req.end();
+    });
+  } catch (err) {
+    console.error('Telegram notification failed:', err);
+  }
+};
+
 export const createQuote = async (req: Request, res: Response) => {
   try {
     const {
@@ -138,7 +150,6 @@ export const createQuote = async (req: Request, res: Response) => {
       return res.status(400).json({ error: true, message: 'Missing required customer or packaging inputs.' });
     }
 
-    // Decode token if present in headers (allows linking quote to active session)
     let loggedUserId: string | null = null;
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -147,7 +158,7 @@ export const createQuote = async (req: Request, res: Response) => {
         const decoded: any = jwt.verify(token, JWT_SECRET);
         loggedUserId = decoded.id;
       } catch (err) {
-        // ignore invalid token, process as guest quote
+        // ignore
       }
     }
 
@@ -190,6 +201,31 @@ export const createQuote = async (req: Request, res: Response) => {
       }
     });
 
+    // ── Send Telegram Notification ────────────────────────────────────────────
+    const discount = calculations.specs.discountApplied !== '0%'
+      ? `\n🏷️ <b>Discount Applied:</b> ${calculations.specs.discountApplied}` : '';
+
+    const telegramMsg = `
+🆕 <b>New B2B Quote Request!</b>
+─────────────────────────
+👤 <b>Name:</b> ${name}
+🏢 <b>Company:</b> ${company || 'N/A'}
+📱 <b>Phone:</b> ${phone}
+📧 <b>Email:</b> ${email}
+─────────────────────────
+📦 <b>Bag Type:</b> ${bagType.replace(/_/g, ' ')}
+📐 <b>Dimensions:</b> ${width}×${height}×${gusset || 0} cm
+🔢 <b>Quantity:</b> ${Number(quantity).toLocaleString()} bags
+🎨 <b>Print Colors:</b> ${printingColors || 0}
+⚖️ <b>GSM:</b> ${gsm || 70}${discount}
+─────────────────────────
+💰 <b>Est. Range:</b> ₹${calculations.estimatedTotalRange.min.toLocaleString()} – ₹${calculations.estimatedTotalRange.max.toLocaleString()}
+⏱️ <b>Lead Time:</b> ${calculations.specs.leadTimeDays} days
+🆔 <b>Ref ID:</b> <code>${quote.id.slice(0, 8).toUpperCase()}</code>
+    `.trim();
+
+    sendTelegramNotification(telegramMsg); // fire-and-forget
+
     res.status(201).json({
       message: 'Quotation generated and saved successfully.',
       quote,
@@ -200,6 +236,7 @@ export const createQuote = async (req: Request, res: Response) => {
     res.status(500).json({ error: true, message: error.message || 'Failed to generate quote.' });
   }
 };
+
 
 export const getMyQuotes = async (req: AuthenticatedRequest, res: Response) => {
   try {

@@ -1,26 +1,254 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Default: Light (White) Theme */
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --card-border: rgba(15, 23, 42, 0.08);
+  --card-hover-bg: rgba(255, 255, 255, 0.95);
+  --card-hover-border: rgba(0, 242, 254, 0.35);
+  --glow-opacity: 0.03;
+  --text-title: #0f172a;
+  --text-body: #334155;
+  --text-muted: #64748b;
+
+  --font-outfit: "Outfit", sans-serif;
+  --font-space-grotesk: "Space Grotesk", sans-serif;
 }
 
-@theme inline {
+html.dark {
+  /* Seamless shift: Dark Theme */
+  --background: #060608;
+  --foreground: #f3f4f6;
+  --card-bg: rgba(12, 12, 16, 0.65);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --card-hover-bg: rgba(16, 16, 22, 0.8);
+  --card-hover-border: rgba(0, 242, 254, 0.25);
+  --glow-opacity: 0.08;
+  --text-title: #ffffff;
+  --text-body: #d1d5db;
+  --text-muted: #9ca3af;
+}
+
+@theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  
+  --font-sans: var(--font-outfit);
+  --font-display: var(--font-space-grotesk);
+  
+  /* Core brand colors */
+  --color-tech-teal-50: #e0fbfd;
+  --color-tech-teal-100: #b3f5fa;
+  --color-tech-teal-200: #80eff7;
+  --color-tech-teal-300: #4de8f3;
+  --color-tech-teal-400: #26e4f1;
+  --color-tech-teal-500: #00e0ee;
+  --color-tech-teal-600: #00ccda;
+  --color-tech-teal-700: #00b4c5;
+  --color-tech-teal-800: #009cb0;
+  --color-tech-teal-900: #00738a;
+  --color-tech-teal-accent: #00f2fe;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-packaging-green-500: #10b981;
+  --color-packaging-green-600: #059669;
+  
+  --color-obsidian-900: #0c0c10;
+  --color-obsidian-950: #060608;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+  font-family: var(--font-outfit), system-ui, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Glassmorphism utility classes */
+.glass-panel {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--card-border);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.glass-panel-hover {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-panel-hover:hover {
+  background: var(--card-hover-bg);
+  border-color: var(--card-hover-border);
+  box-shadow: 0 0 30px rgba(0, 242, 258, var(--glow-opacity));
+  transform: translateY(-2px);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--text-title) 30%, #00f2fe 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-teal-emerald {
+  background: linear-gradient(135deg, #00f2fe 0%, #10b981 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ========================================== */
+/* COMPREHENSIVE LIGHT MODE COLOR CONVERSIONS */
+/* ========================================== */
+
+/* 1. Backgrounds & Sections */
+html.light .bg-obsidian-950,
+html.light .bg-obsidian-950\/40,
+html.light .bg-obsidian-950\/70,
+html.light .bg-linear-to-b,
+html.light .bg-gradient-to-b,
+html.light .bg-gradient-to-br,
+html.light .bg-linear-to-tr,
+html.light .bg-gradient-to-tr {
+  background-color: #ffffff !important;
+  background-image: none !important;
+}
+
+/* Subtle slate background for visual contrast in sections */
+html.light section.bg-obsidian-950\/40,
+html.light section.bg-obsidian-950\/70,
+html.light div.bg-gradient-to-br.from-\[\#0c0c14\] {
+  background-color: #f1f5f9 !important;
+}
+
+html.light div.relative.bg-linear-to-b.from-\[\#0c0c14\] {
+  background-color: #e2e8f0 !important;
+}
+
+html.light header.bg-background\/80 {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* Footer white inversion styling */
+html.light footer.bg-obsidian-950 {
+  background-color: #ffffff !important;
+  color: #334155 !important;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+html.light footer.bg-obsidian-950 h3.text-white,
+html.light footer.bg-obsidian-950 span.text-white {
+  color: #0f172a !important;
+}
+
+/* 2. Border Lines & Grid helper */
+html.light .border-white\/10,
+html.light .border-white\/5,
+html.light hr.border-white\/10,
+html.light hr.border-white\/5 {
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+html.light .border-y.border-white\/10 {
+  border-color: rgba(15, 23, 42, 0.08) !important;
+  background-color: #f8fafc !important;
+}
+
+/* 3. Text and labels overrides (Excluding active button elements) */
+html.light h1, html.light h2, html.light h3, html.light h4, html.light h5, html.light h6 {
+  color: #0f172a !important;
+}
+
+html.light p {
+  color: #334155 !important;
+}
+
+html.light .text-white:not(button):not(a.bg-linear-to-r):not(a.bg-emerald-600):not(.bg-linear-to-r):not(.bg-emerald-600):not(.text-background):not(.btn) {
+  color: #0f172a !important;
+}
+
+html.light .text-gray-400 {
+  color: #475569 !important; /* slate-600 */
+}
+
+html.light .text-gray-300 {
+  color: #334155 !important; /* slate-700 */
+}
+
+html.light .text-gray-500 {
+  color: #64748b !important; /* slate-500 */
+}
+
+/* 4. Form Controls and Select boxes */
+html.light input,
+html.light select,
+html.light textarea {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: rgba(15, 23, 42, 0.15) !important;
+}
+
+html.light select option {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* 5. Custom panels inside configuration and calculator */
+html.light .bg-white\/5 {
+  background-color: rgba(15, 23, 42, 0.04) !important;
+}
+
+html.light .bg-white\/3 {
+  background-color: rgba(15, 23, 42, 0.02) !important;
+}
+
+html.light .text-slate-300 {
+  color: #334155 !important;
+}
+
+/* Custom animations */
+@keyframes slow-rotate {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(360deg);
+  }
+}
+
+.animate-slow-rotate {
+  animation: slow-rotate 25s linear infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.05);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 8s ease-in-out infinite;
+}
+
+/* Hide standard scrollbars but allow scroll */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background: #1e293b;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00f2fe;
 }

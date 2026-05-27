@@ -29,7 +29,7 @@ export const register = async (req: Request, res: Response) => {
         name,
         company,
         phone,
-        role: 'CUSTOMER' // default
+        role: 'CUSTOMER'
       }
     });
 

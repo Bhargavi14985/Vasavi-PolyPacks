@@ -13,7 +13,6 @@ async function main() {
   await prisma.lead.deleteMany({});
   await prisma.user.deleteMany({});
 
-  // Hashes for passwords
   const adminPassword = await bcrypt.hash('admin123', 10);
   const customerPassword = await bcrypt.hash('customer123', 10);
 
@@ -55,7 +54,7 @@ async function main() {
       gusset: 10,
       features: JSON.stringify(['handles', 'liner', 'transparency_window']),
       printingStyle: 'GRAVURE',
-      logoUrl: 'https://images.unsplash.com/photo-1544377193-33dcf4d68fb5?auto=format&fit=crop&q=80&w=200' // Mock logo placeholder
+      logoUrl: 'https://images.unsplash.com/photo-1544377193-33dcf4d68fb5?auto=format&fit=crop&q=80&w=200'
     }
   });
 
@@ -90,8 +89,8 @@ async function main() {
       dimensions: '55x85x10 cm',
       printingColors: 4,
       bagSpecs: JSON.stringify({ gsm: 85, liner: true, handles: true }),
-      estimatedMinPrice: 425000, // 25,000 * 17.00
-      estimatedMaxPrice: 475000, // 25,000 * 19.00
+      estimatedMinPrice: 425000,
+      estimatedMaxPrice: 475000,
       status: 'CONVERTED',
       bagConfigId: config1.id
     }
@@ -109,8 +108,8 @@ async function main() {
       dimensions: '50x75x0 cm',
       printingColors: 2,
       bagSpecs: JSON.stringify({ gsm: 75, liner: false, perforations: true }),
-      estimatedMinPrice: 500000, // 50,000 * 10.00
-      estimatedMaxPrice: 550000, // 50,000 * 11.00
+      estimatedMinPrice: 500000,
+      estimatedMaxPrice: 550000,
       status: 'PENDING',
       bagConfigId: config2.id
     }
@@ -127,8 +126,8 @@ async function main() {
       dimensions: '60x90x0 cm',
       printingColors: 3,
       bagSpecs: JSON.stringify({ gsm: 90, liner: true }),
-      estimatedMinPrice: 1250000, // 100,000 * 12.50
-      estimatedMaxPrice: 1350000, // 100,000 * 13.50
+      estimatedMinPrice: 1250000,
+      estimatedMaxPrice: 1350000,
       status: 'PENDING'
     }
   });
@@ -141,8 +140,8 @@ async function main() {
       quoteId: quote1.id,
       orderNumber: 'VP-2026-0001',
       totalQuantity: 25000,
-      status: 'LAMINATION', // Currently in Lamination stage
-      estDeliveryDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000) // 10 days from now
+      status: 'LAMINATION',
+      estDeliveryDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000)
     }
   });
 
@@ -151,8 +150,8 @@ async function main() {
       quoteId: quote2.id,
       orderNumber: 'VP-2026-0002',
       totalQuantity: 50000,
-      status: 'PLATES_DESIGN', // Currently setting up printing cylinders
-      estDeliveryDate: new Date(Date.now() + 18 * 24 * 60 * 60 * 1000) // 18 days from now
+      status: 'PLATES_DESIGN',
+      estDeliveryDate: new Date(Date.now() + 18 * 24 * 60 * 60 * 1000)
     }
   });
 

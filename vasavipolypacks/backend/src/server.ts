@@ -49,7 +49,6 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   });
 });
 
-// Start Server and verify DB connection
 async function startServer() {
   try {
     await prisma.$connect();

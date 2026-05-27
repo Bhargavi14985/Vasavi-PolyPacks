@@ -1,3 +1,6 @@
+import { Request, Response } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { AuthenticatedRequest } from '../middleware/auth';
 import jwt from 'jsonwebtoken';
 
 const prisma = new PrismaClient();
@@ -7,7 +10,6 @@ export const saveConfiguration = async (req: Request, res: Response) => {
   try {
     const { bagType, color, logoUrl, logoScale, textFront, textBack, width, height, gusset, features, printingStyle } = req.body;
     
-    // Decode token optionally
     let userId: string | null = null;
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -16,7 +18,7 @@ export const saveConfiguration = async (req: Request, res: Response) => {
         const decoded: any = jwt.verify(token, JWT_SECRET);
         userId = decoded.id;
       } catch (err) {
-        // invalid token is ignored, saving as guest
+        // ignore
       }
     }
 

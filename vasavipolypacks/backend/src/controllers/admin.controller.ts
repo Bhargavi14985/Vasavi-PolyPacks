@@ -4,7 +4,6 @@ import { AuthenticatedRequest } from '../middleware/auth';
 
 const prisma = new PrismaClient();
 
-// Get general dashboard statistics
 export const getDashboardMetrics = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const totalLeads = await prisma.lead.count();
@@ -26,7 +25,6 @@ export const getDashboardMetrics = async (req: AuthenticatedRequest, res: Respon
       take: 5
     });
 
-    // Calculate quote value aggregates
     const quoteAggr = await prisma.quote.aggregate({
       _avg: {
         estimatedMinPrice: true,
@@ -37,7 +35,6 @@ export const getDashboardMetrics = async (req: AuthenticatedRequest, res: Respon
       }
     });
 
-    // Mock live factory inventory
     const inventory = {
       rawPPGranulesTons: 42.5,
       boppLaminationFilmKg: 3400,
@@ -70,7 +67,6 @@ export const getDashboardMetrics = async (req: AuthenticatedRequest, res: Respon
   }
 };
 
-// Quote Management
 export const getAllQuotes = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const quotes = await prisma.quote.findMany({
@@ -88,7 +84,7 @@ export const getAllQuotes = async (req: AuthenticatedRequest, res: Response) => 
 export const updateQuoteStatus = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const { status } = req.body; // PENDING, REVIEWED, CONVERTED, CLOSED
+    const { status } = req.body;
 
     const updated = await prisma.quote.update({
       where: { id },
@@ -101,7 +97,6 @@ export const updateQuoteStatus = async (req: AuthenticatedRequest, res: Response
   }
 };
 
-// Order Management (Production Control)
 export const getAllOrders = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const orders = await prisma.order.findMany({
@@ -119,7 +114,7 @@ export const getAllOrders = async (req: AuthenticatedRequest, res: Response) => 
 export const updateOrderStatus = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const { status } = req.body; // e.g. PENDING, PLATES_DESIGN, EXTRUSION, etc.
+    const { status } = req.body;
 
     const updated = await prisma.order.update({
       where: { id },
@@ -132,7 +127,6 @@ export const updateOrderStatus = async (req: AuthenticatedRequest, res: Response
   }
 };
 
-// General Lead Management
 export const getAllLeads = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const leads = await prisma.lead.findMany({
@@ -147,7 +141,7 @@ export const getAllLeads = async (req: AuthenticatedRequest, res: Response) => {
 export const updateLeadStatus = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const { status } = req.body; // NEW, CONTACTED, ARCHIVED
+    const { status } = req.body;
 
     const updated = await prisma.lead.update({
       where: { id },

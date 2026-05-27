@@ -18,7 +18,7 @@ export const createLead = async (req: Request, res: Response) => {
         phone,
         company: company || '',
         message: message || '',
-        type: type || 'CONTACT', // CONTACT, CALLBACK, EXPORT
+        type: type || 'CONTACT',
         status: 'NEW'
       }
     });
