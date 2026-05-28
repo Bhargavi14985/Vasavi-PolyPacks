@@ -26,7 +26,8 @@ export default function SignupPage() {
     setError(null);
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5001/api/auth/register", {
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+      const response = await fetch(`${apiBaseUrl}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password, company, phone })

@@ -394,7 +394,8 @@ export const ThreeDConfigurator: React.FC<ThreeDConfiguratorProps> = ({ onQuoteT
   useEffect(() => {
     const loadConfig = async (id: string) => {
       try {
-        const response = await fetch(`http://localhost:5001/api/configs/${id}`);
+        const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+        const response = await fetch(`${apiBaseUrl}/configs/${id}`);
         const data = await response.json();
         if (response.ok && data.config) {
           const c = data.config;
@@ -496,7 +497,8 @@ export const ThreeDConfigurator: React.FC<ThreeDConfiguratorProps> = ({ onQuoteT
     setSavedSuccess(false);
     try {
       const token = localStorage.getItem("vp_token");
-      const response = await fetch("http://localhost:5001/api/configs", {
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+      const response = await fetch(`${apiBaseUrl}/configs`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
