@@ -1,12 +1,12 @@
 {
   "experimentalServices": {
     "frontend": {
-      "root": "vasavipolypacks/frontend",
+      "root": "frontend",
       "routePrefix": "/",
       "framework": "nextjs"
     },
     "backend": {
-      "root": "vasavipolypacks/backend",
+      "root": "backend",
       "routePrefix": "/_/backend"
     }
   }
