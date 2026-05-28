@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Upload, Download, RotateCw, ZoomIn, Info, Check, Sparkles, RefreshCw } from "lucide-react";
+import { getApiBaseUrl } from "@/utils/api";
 
 export const CAPACITY_MAP: Record<string, { width: number; height: number; gusset: number; label: string }> = {
   "5_KG": { width: 30, height: 45, gusset: 4, label: "5 Kg" },
@@ -394,7 +395,7 @@ export const ThreeDConfigurator: React.FC<ThreeDConfiguratorProps> = ({ onQuoteT
   useEffect(() => {
     const loadConfig = async (id: string) => {
       try {
-        const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+        const apiBaseUrl = getApiBaseUrl();
         const response = await fetch(`${apiBaseUrl}/configs/${id}`);
         const data = await response.json();
         if (response.ok && data.config) {
@@ -497,7 +498,7 @@ export const ThreeDConfigurator: React.FC<ThreeDConfiguratorProps> = ({ onQuoteT
     setSavedSuccess(false);
     try {
       const token = localStorage.getItem("vp_token");
-      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+      const apiBaseUrl = getApiBaseUrl();
       const response = await fetch(`${apiBaseUrl}/configs`, {
         method: "POST",
         headers: {

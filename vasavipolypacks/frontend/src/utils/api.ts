@@ -1,4 +1,15 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+export const getApiBaseUrl = (): string => {
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+  if (typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    if (hostname !== "localhost" && hostname !== "127.0.0.1") {
+      return `${window.location.origin}/_/backend/api`;
+    }
+  }
+  return "http://localhost:5001/api";
+};
 
 export const getAuthHeaders = (): HeadersInit => {
   if (typeof window !== "undefined") {
@@ -16,7 +27,7 @@ export const getAuthHeaders = (): HeadersInit => {
 };
 
 export const apiRequest = async (path: string, options: RequestInit = {}) => {
-  const url = `${API_BASE_URL}${path}`;
+  const url = `${getApiBaseUrl()}${path}`;
   const headers = {
     ...getAuthHeaders(),
     ...options.headers
