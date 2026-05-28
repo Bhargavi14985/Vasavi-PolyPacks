@@ -62,7 +62,7 @@ async function autoSeedDatabase() {
     // 1. Create Users
     const admin = await prisma.user.create({
       data: {
-        email: 'admin@vasavipolypacks.com',
+        email: 'mbhargavi1404@gmail.com',
         password: adminPassword,
         name: 'Krishna Chaitanya',
         role: 'ADMIN',
@@ -242,6 +242,29 @@ async function startServer() {
     
     // Auto-seed database if it is empty
     await autoSeedDatabase();
+
+    // Ensure the new admin user mbhargavi1404@gmail.com exists
+    try {
+      const targetAdmin = await prisma.user.findUnique({ where: { email: 'mbhargavi1404@gmail.com' } });
+      if (!targetAdmin) {
+        console.log('Admin user mbhargavi1404@gmail.com not found. Creating...');
+        const bcrypt = await import('bcryptjs');
+        const adminPassword = await bcrypt.hash('admin123', 10);
+        await prisma.user.create({
+          data: {
+            email: 'mbhargavi1404@gmail.com',
+            password: adminPassword,
+            name: 'Bhargavi Admin',
+            role: 'ADMIN',
+            company: 'Vasavi Polypacks Admin Group',
+            phone: '+91 98765 43210'
+          }
+        });
+        console.log('Admin user mbhargavi1404@gmail.com created successfully.');
+      }
+    } catch (adminErr) {
+      console.error('Failed to ensure target admin:', adminErr);
+    }
 
     if (!process.env.VERCEL) {
       app.listen(PORT, () => {
