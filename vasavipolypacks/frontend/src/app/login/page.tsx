@@ -58,6 +58,14 @@ export default function LoginPage() {
       }
 
       if (data.token && data.user) {
+        // Enforce role matching based on portal mode
+        if (isAdmin && data.user.role !== "ADMIN") {
+          throw new Error("Access denied. Admin console is restricted to administrators.");
+        }
+        if (!isAdmin && data.user.role !== "CUSTOMER") {
+          throw new Error("Access denied. Please use the Admin Sign In portal.");
+        }
+
         login(data.token, data.user);
         
         // Redirect based on role
