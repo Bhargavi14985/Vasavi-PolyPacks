@@ -6,8 +6,9 @@
       "framework": "nextjs"
     },
     "backend": {
-      "root": "vasavipolypacks/backend",
-      "routePrefix": "/_/backend"
+      "entrypoint": "vasavipolypacks/backend/src/server.ts",
+      "routePrefix": "/_/backend",
+      "framework": "express"
     }
   }
 }
