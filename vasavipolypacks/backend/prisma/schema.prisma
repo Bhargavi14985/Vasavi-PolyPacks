@@ -6,12 +6,12 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id        String      @id @default(uuid())
+  id        String      @id @default(uuid()) @map("_id")
   email     String      @unique
   password  String
   name      String
@@ -25,7 +25,7 @@ model User {
 }
 
 model BagConfig {
-  id            String   @id @default(uuid())
+  id            String   @id @default(uuid()) @map("_id")
   userId        String?
   user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   bagType       String   // "BOPP_LAMINATED", "PP_WOVEN", "BOX_BOTTOM", "GUSSETED_SACK"
@@ -45,7 +45,7 @@ model BagConfig {
 }
 
 model Quote {
-  id                 String     @id @default(uuid())
+  id                 String     @id @default(uuid()) @map("_id")
   userId             String?
   user               User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
   name               String
@@ -68,7 +68,7 @@ model Quote {
 }
 
 model Lead {
-  id        String   @id @default(uuid())
+  id        String   @id @default(uuid()) @map("_id")
   name      String
   email     String
   phone     String
@@ -81,7 +81,7 @@ model Lead {
 }
 
 model Order {
-  id              String   @id @default(uuid())
+  id              String   @id @default(uuid()) @map("_id")
   quoteId         String
   quote           Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
   orderNumber     String   @unique
