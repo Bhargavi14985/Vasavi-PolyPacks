@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../db/mongodb';
 import { AuthenticatedRequest } from '../middleware/auth';
 
 const prisma = new PrismaClient();

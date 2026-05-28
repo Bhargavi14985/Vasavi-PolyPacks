@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../db/mongodb';
 import { AuthenticatedRequest } from '../middleware/auth';
 import jwt from 'jsonwebtoken';
 
