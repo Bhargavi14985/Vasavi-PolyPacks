@@ -53,13 +53,19 @@ async function startServer() {
   try {
     await prisma.$connect();
     console.log('Successfully connected to the database.');
-    app.listen(PORT, () => {
-      console.log(`Server is running in development mode on http://localhost:${PORT}`);
-    });
+    if (!process.env.VERCEL) {
+      app.listen(PORT, () => {
+        console.log(`Server is running in development mode on http://localhost:${PORT}`);
+      });
+    }
   } catch (error) {
     console.error('Failed to start server:', error);
-    process.exit(1);
+    if (!process.env.VERCEL) {
+      process.exit(1);
+    }
   }
 }
 
 startServer();
+
+export default app;
