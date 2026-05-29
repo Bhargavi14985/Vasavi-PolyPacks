@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { OAuth2Client } from 'google-auth-library';
 import { PrismaClient } from '../db/mongodb';
 import { AuthenticatedRequest } from '../middleware/auth';
 
@@ -118,5 +119,63 @@ export const getMe = async (req: AuthenticatedRequest, res: Response) => {
   } catch (error: any) {
     console.error('getMe error:', error);
     res.status(500).json({ error: true, message: error.message || 'Internal server error' });
+  }
+};
+
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '572769494662-3a79kvilq1d6554t5pfjm3ctg1i6j9uu.apps.googleusercontent.com';
+const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
+
+export const googleLogin = async (req: Request, res: Response) => {
+  try {
+    const { token } = req.body;
+    if (!token) {
+      return res.status(400).json({ error: true, message: 'Google ID token required.' });
+    }
+
+    // Verify Google ID Token
+    const ticket = await googleClient.verifyIdToken({
+      idToken: token,
+      audience: GOOGLE_CLIENT_ID
+    });
+    const payload = ticket.getPayload();
+    if (!payload || !payload.email) {
+      return res.status(400).json({ error: true, message: 'Invalid Google token payload.' });
+    }
+
+    const { email, name } = payload;
+
+    // Find or create the user in database
+    let user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      // Create user with CUSTOMER role
+      user = await prisma.user.create({
+        data: {
+          email,
+          password: await bcrypt.hash(Math.random().toString(36).substring(2), 10),
+          name: name || email.split('@')[0],
+          role: 'CUSTOMER',
+          company: 'Google User',
+          phone: ''
+        }
+      });
+    }
+
+    const sessionToken = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
+
+    res.status(200).json({
+      message: 'Login successful via Google',
+      token: sessionToken,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        company: user.company,
+        phone: user.phone
+      }
+    });
+  } catch (error: any) {
+    console.error('Google login error:', error);
+    res.status(500).json({ error: true, message: error.message || 'Google authentication failed.' });
   }
 };

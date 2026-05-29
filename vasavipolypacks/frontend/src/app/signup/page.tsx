@@ -4,12 +4,14 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { User, Mail, Lock, Building, Phone, ShieldCheck } from "lucide-react";
 import { getApiBaseUrl } from "@/utils/api";
 
 export default function SignupPage() {
   const router = useRouter();
   const { login } = useAuth();
+  const { t } = useLanguage();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -56,8 +58,8 @@ export default function SignupPage() {
           <Link href="/" className="inline-flex items-center gap-2 group mb-4">
             <img src="/images/logo.png" alt="Vasavi Polypacks" className="h-24 w-auto rounded bg-white p-1.5 shadow-md" />
           </Link>
-          <h2 className="text-white font-display text-lg font-bold uppercase tracking-wider">Corporate Registration</h2>
-          <p className="text-xs text-gray-400 mt-1">Initialize your B2B account for custom manufacturing runs.</p>
+          <h2 className="text-white font-display text-lg font-bold uppercase tracking-wider">{t("corporate_registration")}</h2>
+          <p className="text-xs text-gray-400 mt-1">{t("b2b_init_desc")}</p>
         </div>
 
         {error && (
@@ -70,7 +72,7 @@ export default function SignupPage() {
           <div className="relative">
             <input
               type="text"
-              placeholder="Contact Name *"
+              placeholder={t("contact_name")}
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -82,7 +84,7 @@ export default function SignupPage() {
           <div className="relative">
             <input
               type="email"
-              placeholder="Corporate Email *"
+              placeholder={t("corporate_email")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -94,7 +96,7 @@ export default function SignupPage() {
           <div className="relative">
             <input
               type="text"
-              placeholder="Company Name"
+              placeholder={t("company_name")}
               value={company}
               onChange={(e) => setCompany(e.target.value)}
               className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 pl-10 text-xs text-white focus:outline-none focus:border-tech-teal-500"
@@ -105,7 +107,7 @@ export default function SignupPage() {
           <div className="relative">
             <input
               type="tel"
-              placeholder="Phone / WhatsApp Number"
+              placeholder={t("phone_number")}
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 pl-10 text-xs text-white focus:outline-none focus:border-tech-teal-500"
@@ -116,7 +118,7 @@ export default function SignupPage() {
           <div className="relative">
             <input
               type="password"
-              placeholder="Access Password *"
+              placeholder={t("access_password")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -130,12 +132,12 @@ export default function SignupPage() {
             disabled={loading}
             className="w-full py-3 px-4 rounded-lg bg-linear-to-r from-tech-teal-500 to-tech-teal-700 text-background font-bold text-xs hover:scale-102 transition-transform shadow-[0_0_15px_rgba(0,242,254,0.2)] cursor-pointer text-center"
           >
-            {loading ? "Registering Account..." : "Create B2B Account"}
+            {loading ? t("registering_account") : t("create_b2b_account")}
           </button>
         </form>
 
         <div className="text-center pt-2 text-[11px] text-gray-500">
-          <span>Already have an account? <Link href="/login" className="text-tech-teal-300 font-semibold hover:underline">Sign In here</Link></span>
+          <span>{t("already_have_account")} <Link href="/login" className="text-tech-teal-300 font-semibold hover:underline">{t("signin_here")}</Link></span>
         </div>
       </div>
     </div>

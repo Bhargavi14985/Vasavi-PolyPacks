@@ -5,21 +5,28 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
-import { Menu, X, Box, BarChart3, ShieldCheck, User2, LogOut, ArrowRight, Sun, Moon, ChevronDown } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
+import { Menu, X, Box, BarChart3, ShieldCheck, User2, LogOut, ArrowRight, Sun, Moon, ChevronDown, Globe } from "lucide-react";
 
 export const Navbar: React.FC = () => {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { language, setLanguage, t } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [signInOpen, setSignInOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
   const signInRef = useRef<HTMLDivElement>(null);
+  const langRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown on outside click
+  // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (signInRef.current && !signInRef.current.contains(e.target as Node)) {
         setSignInOpen(false);
+      }
+      if (langRef.current && !langRef.current.contains(e.target as Node)) {
+        setLangOpen(false);
       }
     };
     document.addEventListener("mousedown", handler);
@@ -29,10 +36,10 @@ export const Navbar: React.FC = () => {
   const isActive = (path: string) => pathname === path;
 
   const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/products", label: "Products" },
-    { href: "/studio", label: "3D Studio", icon: <Box className="w-4 h-4 mr-1 text-tech-teal-300" /> },
-    { href: "/calculator", label: "Get Quotation", icon: <BarChart3 className="w-4 h-4 mr-1 text-packaging-green-500" /> },
+    { href: "/", labelKey: "home" },
+    { href: "/products", labelKey: "products" },
+    { href: "/studio", labelKey: "3d_studio", icon: <Box className="w-4 h-4 mr-1 text-tech-teal-300" /> },
+    { href: "/calculator", labelKey: "get_quotation", icon: <BarChart3 className="w-4 h-4 mr-1 text-packaging-green-500" /> },
   ];
 
   return (
@@ -57,7 +64,7 @@ export const Navbar: React.FC = () => {
                 }`}
               >
                 {link.icon}
-                {link.label}
+                {t(link.labelKey)}
               </Link>
             ))}
 
@@ -70,7 +77,7 @@ export const Navbar: React.FC = () => {
                 }`}
               >
                 <ShieldCheck className="w-4 h-4 mr-1" />
-                Admin Console
+                {t("admin_console")}
               </Link>
             )}
 
@@ -82,13 +89,60 @@ export const Navbar: React.FC = () => {
                 }`}
               >
                 <User2 className="w-4 h-4 mr-1 text-tech-teal-400" />
-                B2B Portal
+                {t("b2b_portal")}
               </Link>
             )}
           </nav>
 
           {/* Action CTAs */}
           <div className="hidden md:flex items-center gap-4">
+            {/* Language Selector Dropdown */}
+            <div ref={langRef} className="relative">
+              <button
+                onClick={() => setLangOpen(!langOpen)}
+                className="p-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1.5"
+                title="Select Language / భాషను ఎంచుకోండి"
+              >
+                <Globe className="w-4 h-4 text-tech-teal-400" />
+                <span className="text-xs uppercase font-semibold tracking-wider">{language}</span>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${langOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              {/* Language Dropdown Menu */}
+              {langOpen && (
+                <div className="absolute right-0 top-full mt-2 w-36 bg-white dark:bg-[#0c0c16] border border-gray-200 dark:border-white/10 rounded-xl shadow-lg dark:shadow-[0_8px_32px_rgba(0,0,0,0.5)] overflow-hidden z-50">
+                  <div className="p-1.5 flex flex-col gap-1">
+                    <button
+                      onClick={() => {
+                        setLanguage("en");
+                        setLangOpen(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+                        language === "en"
+                          ? "bg-tech-teal-500/10 text-tech-teal-600 dark:text-tech-teal-400"
+                          : "hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300"
+                      }`}
+                    >
+                      English
+                    </button>
+                    <button
+                      onClick={() => {
+                        setLanguage("te");
+                        setLangOpen(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+                        language === "te"
+                          ? "bg-tech-teal-500/10 text-tech-teal-600 dark:text-tech-teal-400"
+                          : "hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300"
+                      }`}
+                    >
+                      తెలుగు (Telugu)
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -97,6 +151,7 @@ export const Navbar: React.FC = () => {
             >
               {theme === "light" ? <Moon className="w-4 h-4 text-slate-700" /> : <Sun className="w-4 h-4 text-yellow-400" />}
             </button>
+
             {user ? (
               <div className="flex items-center gap-3">
                 <span className="text-xs text-gray-400 font-medium bg-white/5 py-1.5 px-3 rounded-full border border-white/5">
@@ -118,7 +173,7 @@ export const Navbar: React.FC = () => {
                     onClick={() => setSignInOpen(!signInOpen)}
                     className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-300 hover:text-white transition-colors border border-white/10 hover:border-white/20 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 cursor-pointer"
                   >
-                    Sign In
+                    {t("sign_in")}
                     <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${signInOpen ? "rotate-180" : ""}`} />
                   </button>
 
@@ -133,8 +188,8 @@ export const Navbar: React.FC = () => {
                         >
                           <ShieldCheck className="w-4 h-4 text-amber-600 dark:text-yellow-400 shrink-0" />
                           <div className="flex flex-col">
-                            <span className="text-xs font-bold text-amber-600 dark:text-yellow-400">Admin Sign In</span>
-                            <span className="text-[10px] text-gray-500">Staff console access</span>
+                            <span className="text-xs font-bold text-amber-600 dark:text-yellow-400">{t("admin_sign_in")}</span>
+                            <span className="text-[10px] text-gray-500">{t("staff_console")}</span>
                           </div>
                         </Link>
                         <Link
@@ -144,8 +199,8 @@ export const Navbar: React.FC = () => {
                         >
                           <User2 className="w-4 h-4 text-tech-teal-600 dark:text-tech-teal-400 shrink-0" />
                           <div className="flex flex-col">
-                            <span className="text-xs font-bold text-tech-teal-700 dark:text-tech-teal-300">Client Sign In</span>
-                            <span className="text-[10px] text-gray-500">B2B customer portal</span>
+                            <span className="text-xs font-bold text-tech-teal-700 dark:text-tech-teal-300">{t("client_sign_in")}</span>
+                            <span className="text-[10px] text-gray-500">{t("b2b_portal")}</span>
                           </div>
                         </Link>
                       </div>
@@ -157,7 +212,7 @@ export const Navbar: React.FC = () => {
                   href="/calculator"
                   className="inline-flex items-center justify-center rounded-lg bg-linear-to-r from-tech-teal-500 to-tech-teal-700 px-4 py-2 text-xs font-semibold text-background hover:scale-105 transition-transform shadow-[0_0_15px_rgba(0,242,254,0.3)]"
                 >
-                  Get Quotation
+                  {t("get_quotation")}
                   <ArrowRight className="ml-1.5 w-3.5 h-3.5" />
                 </Link>
               </>
@@ -168,7 +223,7 @@ export const Navbar: React.FC = () => {
           <div className="flex md:hidden">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="text-gray-400 hover:text-white"
+              className="text-gray-400 hover:text-white cursor-pointer"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -188,7 +243,7 @@ export const Navbar: React.FC = () => {
                 isActive(link.href) ? "text-tech-teal-400" : "text-gray-300"
               }`}
             >
-              {link.label}
+              {t(link.labelKey)}
             </Link>
           ))}
 
@@ -198,7 +253,7 @@ export const Navbar: React.FC = () => {
               onClick={() => setMobileMenuOpen(false)}
               className="flex items-center py-2 text-base font-medium text-yellow-500"
             >
-              Admin Console
+              {t("admin_console")}
             </Link>
           )}
 
@@ -208,9 +263,38 @@ export const Navbar: React.FC = () => {
               onClick={() => setMobileMenuOpen(false)}
               className="flex items-center py-2 text-base font-medium text-tech-teal-300"
             >
-              B2B Portal
+              {t("b2b_portal")}
             </Link>
           )}
+
+          <hr className="border-white/10 my-1" />
+          
+          {/* Mobile Language Selector */}
+          <div className="flex justify-between items-center py-1">
+            <span className="text-xs text-gray-400">Language / భాష</span>
+            <div className="flex gap-1.5">
+              <button
+                onClick={() => setLanguage("en")}
+                className={`px-2.5 py-1 text-xs font-semibold rounded-md border cursor-pointer transition-colors ${
+                  language === "en"
+                    ? "bg-tech-teal-500/10 border-tech-teal-500/30 text-tech-teal-400"
+                    : "border-white/10 text-gray-400 hover:text-white"
+                }`}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => setLanguage("te")}
+                className={`px-2.5 py-1 text-xs font-semibold rounded-md border cursor-pointer transition-colors ${
+                  language === "te"
+                    ? "bg-tech-teal-500/10 border-tech-teal-500/30 text-tech-teal-400"
+                    : "border-white/10 text-gray-400 hover:text-white"
+                }`}
+              >
+                తెలుగు
+              </button>
+            </div>
+          </div>
 
           <hr className="border-white/10 my-1" />
           
@@ -234,10 +318,10 @@ export const Navbar: React.FC = () => {
                   setMobileMenuOpen(false);
                   logout();
                 }}
-                className="flex items-center text-sm text-red-400 gap-1.5"
+                className="flex items-center text-sm text-red-400 gap-1.5 cursor-pointer"
               >
                 <LogOut className="w-4 h-4" />
-                Logout
+                {t("logout")}
               </button>
             </div>
           ) : (
@@ -248,7 +332,7 @@ export const Navbar: React.FC = () => {
                 className="flex items-center gap-2 py-2.5 px-3 text-sm font-bold text-yellow-400 border border-yellow-500/20 bg-yellow-500/5 rounded-lg"
               >
                 <ShieldCheck className="w-4 h-4" />
-                Admin Sign In
+                {t("admin_sign_in")}
               </Link>
               <Link
                 href="/login"
@@ -256,14 +340,14 @@ export const Navbar: React.FC = () => {
                 className="flex items-center gap-2 py-2.5 px-3 text-sm font-bold text-tech-teal-300 border border-tech-teal-500/20 bg-tech-teal-500/5 rounded-lg"
               >
                 <User2 className="w-4 h-4" />
-                Client Sign In
+                {t("client_sign_in")}
               </Link>
               <Link
                 href="/calculator"
                 onClick={() => setMobileMenuOpen(false)}
                 className="text-center py-2.5 text-sm font-semibold bg-linear-to-r from-tech-teal-500 to-tech-teal-700 text-background rounded-lg"
               >
-                Get Quotation
+                {t("get_quotation")}
               </Link>
             </div>
           )}

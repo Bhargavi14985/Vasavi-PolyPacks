@@ -2,10 +2,12 @@
 
 import React from "react";
 import Link from "next/link";
+import { useLanguage } from "@/context/LanguageContext";
 import { MessageSquare, Mail, Phone, MapPin, Award, ShieldAlert, Globe } from "lucide-react";
 
 export const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
+  const { t } = useLanguage();
 
   const handleWhatsAppChat = () => {
     // Open whatsapp link
@@ -23,41 +25,41 @@ export const Footer: React.FC = () => {
                 VASAVI POLYPACKS
               </span>
               <span className="text-xs uppercase tracking-widest text-tech-teal-300 font-semibold mt-1">
-                Industrial Packaging Systems
+                {t("footer_desc").includes("తదుపరి") ? "పారిశ్రామిక ప్యాకేజింగ్ సిస్టమ్స్" : "Industrial Packaging Systems"}
               </span>
             </div>
             <p className="text-xs leading-relaxed text-gray-400">
-              Leading manufacturer and global exporter of high-grade BOPP laminated bags, PP woven sacks, block bottom valve bags, and custom printed industrial packaging.
+              {t("footer_desc")}
             </p>
             <div className="flex items-center gap-2 text-xs font-semibold text-white/90">
               <Award className="w-4 h-4 text-yellow-500" />
-              <span>ISO 9001:2015 & ISO 22000 Certified</span>
+              <span>{t("iso_certified")}</span>
             </div>
           </div>
 
           {/* Product Lines */}
           <div>
             <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">
-              Packaging Categories
+              {t("packaging_categories")}
             </h3>
             <ul className="flex flex-col gap-2 text-xs">
               <li>
-                <Link href="/products" className="hover:text-tech-teal-300 transition-colors">BOPP Laminated Bags</Link>
+                <Link href="/products" className="hover:text-tech-teal-300 transition-colors">{t("bopp_bags")}</Link>
               </li>
               <li>
-                <Link href="/products" className="hover:text-tech-teal-300 transition-colors">PP Woven Sacks</Link>
+                <Link href="/products" className="hover:text-tech-teal-300 transition-colors">{t("pp_sacks")}</Link>
               </li>
               <li>
-                <Link href="/products" className="hover:text-tech-teal-300 transition-colors">Rice & Food Grain Bags</Link>
+                <Link href="/products" className="hover:text-tech-teal-300 transition-colors">{t("food_bags")}</Link>
               </li>
               <li>
-                <Link href="/products" className="hover:text-tech-teal-300 transition-colors">Cement & Fertilizer Bags</Link>
+                <Link href="/products" className="hover:text-tech-teal-300 transition-colors">{t("cement_bags")}</Link>
               </li>
               <li>
-                <Link href="/products" className="hover:text-tech-teal-300 transition-colors">Block Bottom Valve Bags</Link>
+                <Link href="/products" className="hover:text-tech-teal-300 transition-colors">{t("valve_bags")}</Link>
               </li>
               <li>
-                <Link href="/products" className="hover:text-tech-teal-300 transition-colors">Custom Printed Sacks</Link>
+                <Link href="/products" className="hover:text-tech-teal-300 transition-colors">{t("printed_sacks")}</Link>
               </li>
             </ul>
           </div>
@@ -65,24 +67,24 @@ export const Footer: React.FC = () => {
           {/* Interactive Tools */}
           <div>
             <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">
-              Digital Workspace
+              {t("digital_workspace")}
             </h3>
             <ul className="flex flex-col gap-2 text-xs">
               <li>
                 <Link href="/studio" className="hover:text-tech-teal-300 transition-colors font-medium text-tech-teal-300">
-                  Interactive 3D Studio
+                  {t("3d_studio")}
                 </Link>
               </li>
               <li>
                 <Link href="/calculator" className="hover:text-tech-teal-300 transition-colors font-medium text-packaging-green-500">
-                  Get Quotation
+                  {t("get_quotation")}
                 </Link>
               </li>
               <li>
-                <Link href="/login" className="hover:text-tech-teal-300 transition-colors">B2B Customer Login</Link>
+                <Link href="/login" className="hover:text-tech-teal-300 transition-colors">{t("client_sign_in")}</Link>
               </li>
               <li>
-                <Link href="/admin" className="hover:text-tech-teal-300 transition-colors text-yellow-500">Staff Console</Link>
+                <Link href="/admin" className="hover:text-tech-teal-300 transition-colors text-yellow-500">{t("staff_console")}</Link>
               </li>
             </ul>
           </div>
@@ -90,12 +92,22 @@ export const Footer: React.FC = () => {
           {/* Export & Contact Desk */}
           <div className="flex flex-col gap-3">
             <h3 className="text-sm font-semibold text-white uppercase tracking-wider">
-              Contact & Support
+              {t("contact_us")}
             </h3>
             <div className="flex flex-col gap-2 text-xs">
               <div className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 text-tech-teal-400 shrink-0 mt-0.5" />
-                <span>Near HP Petrol Bunk, Janapadu, 522413,<br />Piduguralla, Palnadu District,<br />Andhra Pradesh</span>
+                <span>
+                  {t("address_text").includes("హెచ్‌పి") ? (
+                    <>
+                      హెచ్‌పి పెట్రోల్ బంక్ దగ్గర, జానపాడు, 522413,<br />పిడుగురాళ్ల, పల్నాడు జిల్లా,<br />ఆంధ్రప్రదేశ్
+                    </>
+                  ) : (
+                    <>
+                      Near HP Petrol Bunk, Janapadu, 522413,<br />Piduguralla, Palnadu District,<br />Andhra Pradesh
+                    </>
+                  )}
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-tech-teal-400 shrink-0" />
@@ -112,7 +124,7 @@ export const Footer: React.FC = () => {
               className="mt-2 inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2 px-4 text-xs transition-colors cursor-pointer"
             >
               <MessageSquare className="w-4 h-4" />
-              Chat on WhatsApp
+              {t("chat_on_whatsapp")}
             </button>
           </div>
         </div>
@@ -120,11 +132,11 @@ export const Footer: React.FC = () => {
         <hr className="border-white/10 my-8" />
 
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-gray-500">
-          <p>© {currentYear} Vasavi Polypacks Private Limited. All Rights Reserved.</p>
+          <p>© {currentYear} Vasavi Polypacks Private Limited. {t("all_rights_reserved")}</p>
           <div className="flex gap-4">
-            <Link href="/" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="/" className="hover:text-white transition-colors">Terms of Trade</Link>
-            <Link href="/" className="hover:text-white transition-colors">Export Licensing</Link>
+            <Link href="/" className="hover:text-white transition-colors">{t("privacy_policy")}</Link>
+            <Link href="/" className="hover:text-white transition-colors">{t("terms_of_trade")}</Link>
+            <Link href="/" className="hover:text-white transition-colors">{t("export_licensing")}</Link>
           </div>
         </div>
       </div>

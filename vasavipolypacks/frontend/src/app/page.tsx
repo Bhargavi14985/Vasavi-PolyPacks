@@ -3,10 +3,13 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { apiRequest } from "@/utils/api";
+import { useLanguage } from "@/context/LanguageContext";
 import { ArrowRight, Box, BarChart3, ShieldCheck, Factory, Award, MessageSquare, Globe, ArrowUpRight, Play, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function HomePage() {
+  const { language, t } = useLanguage();
+
   // Callback Request Lead Capture State
   const [callbackName, setCallbackName] = useState("");
   const [callbackPhone, setCallbackPhone] = useState("");
@@ -40,38 +43,13 @@ export default function HomePage() {
     }
   };
 
-
   const workflowSteps = [
-    {
-      step: "01",
-      title: "Granule Extrusion",
-      desc: "High-grade virgin polypropylene granules are melted and extruded into high-strength micro tapes."
-    },
-    {
-      step: "02",
-      title: "PP Weaving Looms",
-      desc: "Circular weaving looms weave tape spools into high-durability tubular fabric rolls."
-    },
-    {
-      step: "03",
-      title: "High-Speed Gravure Printing",
-      desc: "Photorealistic up to 8-color designs reverse printed on BOPP film layers."
-    },
-    {
-      step: "04",
-      title: "Extrusion Lamination",
-      desc: "Printed BOPP films are heat bonded onto the PP fabric layer using raw molten polymer."
-    },
-    {
-      step: "05",
-      title: "Seaming & Stitching",
-      desc: "Cutting rolls, folding gussets, inserting PE liners, and sewing base hems."
-    },
-    {
-      step: "06",
-      title: "QA Auditing",
-      desc: "Every batch passes drop tests, weld seam inspections, and weight checks."
-    }
+    { step: "01", titleKey: "step_1_title", descKey: "step_1_desc" },
+    { step: "02", titleKey: "step_2_title", descKey: "step_2_desc" },
+    { step: "03", titleKey: "step_3_title", descKey: "step_3_desc" },
+    { step: "04", titleKey: "step_4_title", descKey: "step_4_desc" },
+    { step: "05", titleKey: "step_5_title", descKey: "step_5_desc" },
+    { step: "06", titleKey: "step_6_title", descKey: "step_6_desc" }
   ];
 
   return (
@@ -84,15 +62,23 @@ export default function HomePage() {
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 flex flex-col items-center text-center">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-tech-teal-500/30 bg-tech-teal-500/5 text-tech-teal-300 text-xs font-semibold uppercase tracking-wider mb-6">
           <Globe className="w-3.5 h-3.5" />
-          Export-Grade B2B Industrial Supply
+          {t("hero_tag")}
         </div>
 
-        <h1 className="font-display font-black text-4xl sm:text-6xl tracking-tight text-white max-w-4xl leading-tight">
-          FUTURE-READY <span className="text-gradient-teal-emerald">PACKAGING SYSTEMS</span> FOR INDUSTRIAL LEADERS
+        <h1 className="font-display font-black text-4xl sm:text-6xl tracking-tight text-white max-w-4xl leading-tight uppercase">
+          {language === "en" ? (
+            <>
+              FUTURE-READY <span className="text-gradient-teal-emerald">PACKAGING SYSTEMS</span> FOR INDUSTRIAL LEADERS
+            </>
+          ) : (
+            <>
+              పారిశ్రామిక నాయకుల కోసం <span className="text-gradient-teal-emerald">ఫ్యూచర్-రెడీ ప్యాకేజింగ్</span> సిస్టమ్స్
+            </>
+          )}
         </h1>
 
         <p className="mt-6 text-sm sm:text-base text-gray-400 max-w-2xl leading-relaxed">
-          Vasavi Polypacks manufactures high-strength BOPP laminated bags, PP woven sacks, dal & food grain bags, and block bottom valve sacks. Completely customized configurations delivered globally.
+          {t("hero_desc")}
         </p>
 
         {/* Hero CTAs */}
@@ -102,7 +88,7 @@ export default function HomePage() {
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-linear-to-r from-tech-teal-500 to-tech-teal-700 py-3.5 px-8 font-bold text-sm text-background hover:scale-103 transition-transform shadow-[0_0_20px_rgba(0,242,254,0.3)]"
           >
             <Box className="w-4 h-4" />
-            Launch 3D studio
+            {t("launch_3d_studio")}
             <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
@@ -110,30 +96,29 @@ export default function HomePage() {
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-white/5 border border-white/10 py-3.5 px-8 font-bold text-sm text-white hover:bg-white/10 transition-colors"
           >
             <BarChart3 className="w-4 h-4 text-packaging-green-500" />
-            Get Quotation
+            {t("get_quotation")}
           </Link>
         </div>
       </section>
-
 
       {/* Cinematic Factory Timeline Experience */}
       <section className="bg-obsidian-950/70 border-y border-white/10 py-20 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-16">
             <div>
-              <span className="text-xs uppercase tracking-widest text-tech-teal-300 font-semibold flex items-center gap-1">
+              <span className="text-xs uppercase tracking-widest text-tech-teal-300 font-semibold flex items-center gap-1.5">
                 <Factory className="w-3.5 h-3.5" />
-                Advanced Manufacturing Facility
+                {t("mfg_facility")}
               </span>
               <h2 className="font-display font-black text-2xl sm:text-4xl text-white uppercase tracking-wider mt-2">
-                Cinematic Production Workflow
+                {t("production_workflow")}
               </h2>
             </div>
             <Link
               href="/products"
               className="inline-flex items-center gap-1 text-xs text-tech-teal-300 font-bold uppercase tracking-wider border-b border-tech-teal-500/30 hover:border-tech-teal-300 pb-0.5"
             >
-              View Plant Tour Machinery
+              {t("view_machinery")}
               <ArrowUpRight className="w-4 h-4" />
             </Link>
           </div>
@@ -146,8 +131,8 @@ export default function HomePage() {
                   {step.step}
                 </div>
                 <div className="flex flex-col">
-                  <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-2">{step.title}</h3>
-                  <p className="text-xs text-gray-400 leading-relaxed">{step.desc}</p>
+                  <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-2">{t(step.titleKey)}</h3>
+                  <p className="text-xs text-gray-400 leading-relaxed">{t(step.descKey)}</p>
                 </div>
               </div>
             ))}
@@ -163,26 +148,26 @@ export default function HomePage() {
             <div>
               <span className="text-xs uppercase tracking-widest text-packaging-green-500 font-semibold flex items-center gap-1.5">
                 <Award className="w-4 h-4" />
-                Trusted by 850+ Global Enterprises
+                {t("trusted_enterprises")}
               </span>
               <h2 className="font-display font-black text-2xl sm:text-4xl text-white uppercase tracking-wider mt-2">
-                Uncompromising Quality Audit
+                {t("quality_audit")}
               </h2>
             </div>
             <p className="text-xs sm:text-sm text-gray-400 leading-relaxed">
-              Vasavi Polypacks stands for quality packaging solutions. Our clean vaults and advanced manufacturing units allow us to ensure zero defects, optimal GSM weights, and tear-free lamination films.
+              {t("quality_desc")}
             </p>
 
             <div className="flex flex-col gap-3">
               {[
-                "100% Food-Grade high strength Virgin Polypropylene materials",
-                "ISO 9001:2015 & ISO 22000 quality control systems",
-                "Custom plate designing for brand shelf dominance",
-                "Advanced extrusion coating lamination units"
-              ].map((point, index) => (
+                "quality_point_1",
+                "quality_point_2",
+                "quality_point_3",
+                "quality_point_4"
+              ].map((pointKey, index) => (
                 <div key={index} className="flex items-center gap-2.5 text-xs text-white">
                   <CheckCircle className="w-4 h-4 text-tech-teal-400 shrink-0" />
-                  <span>{point}</span>
+                  <span>{t(pointKey)}</span>
                 </div>
               ))}
             </div>
@@ -193,22 +178,22 @@ export default function HomePage() {
             {callbackSuccess ? (
               <div className="text-center py-8">
                 <CheckCircle className="w-12 h-12 text-packaging-green-500 mx-auto mb-4" />
-                <h3 className="text-white font-semibold text-lg uppercase tracking-wider">Callback Logged!</h3>
+                <h3 className="text-white font-semibold text-lg uppercase tracking-wider">{t("callback_success_title")}</h3>
                 <p className="text-xs text-gray-400 mt-2">
-                  Thank you. An industrial packaging consultant will ring you shortly.
+                  {t("callback_success_desc")}
                 </p>
               </div>
             ) : (
               <form onSubmit={handleCallbackSubmit} className="flex flex-col gap-5">
                 <div>
-                  <h3 className="text-white font-semibold text-base uppercase tracking-wider">Request Callback</h3>
-                  <p className="text-xs text-gray-400 mt-0.5">Quick query? Drop your phone and we'll ring you back.</p>
+                  <h3 className="text-white font-semibold text-base uppercase tracking-wider">{t("request_callback")}</h3>
+                  <p className="text-xs text-gray-400 mt-0.5">{t("callback_subtitle")}</p>
                 </div>
 
                 <div className="flex flex-col gap-2">
                   <input
                     type="text"
-                    placeholder="Enter Your Name"
+                    placeholder={t("enter_name")}
                     value={callbackName}
                     onChange={(e) => setCallbackName(e.target.value)}
                     required
@@ -216,7 +201,7 @@ export default function HomePage() {
                   />
                   <input
                     type="tel"
-                    placeholder="Contact Number (e.g. +91 9490343682)"
+                    placeholder={t("contact_number")}
                     value={callbackPhone}
                     onChange={(e) => setCallbackPhone(e.target.value)}
                     required
@@ -229,7 +214,7 @@ export default function HomePage() {
                   disabled={loading}
                   className="py-3 px-4 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold text-xs transition-colors cursor-pointer text-center"
                 >
-                  {loading ? "Submitting Request..." : "Schedule Call"}
+                  {loading ? t("submitting_request") : t("schedule_call")}
                 </button>
               </form>
             )}
