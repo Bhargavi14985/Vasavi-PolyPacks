@@ -6,27 +6,22 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { useLanguage } from "@/context/LanguageContext";
-import { Menu, X, Box, BarChart3, ShieldCheck, User2, LogOut, ArrowRight, Sun, Moon, ChevronDown, Globe } from "lucide-react";
+import { Menu, X, Box, BarChart3, ShieldCheck, User2, LogOut, ArrowRight, Sun, Moon, ChevronDown } from "lucide-react";
 
 export const Navbar: React.FC = () => {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const { language, setLanguage, t } = useLanguage();
+  const { t } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [signInOpen, setSignInOpen] = useState(false);
-  const [langOpen, setLangOpen] = useState(false);
   const signInRef = useRef<HTMLDivElement>(null);
-  const langRef = useRef<HTMLDivElement>(null);
 
   // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (signInRef.current && !signInRef.current.contains(e.target as Node)) {
         setSignInOpen(false);
-      }
-      if (langRef.current && !langRef.current.contains(e.target as Node)) {
-        setLangOpen(false);
       }
     };
     document.addEventListener("mousedown", handler);
@@ -96,53 +91,6 @@ export const Navbar: React.FC = () => {
 
           {/* Action CTAs */}
           <div className="hidden md:flex items-center gap-4">
-            {/* Language Selector Dropdown */}
-            <div ref={langRef} className="relative">
-              <button
-                onClick={() => setLangOpen(!langOpen)}
-                className="p-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1.5"
-                title="Select Language / భాషను ఎంచుకోండి"
-              >
-                <Globe className="w-4 h-4 text-tech-teal-400" />
-                <span className="text-xs uppercase font-semibold tracking-wider">{language}</span>
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${langOpen ? "rotate-180" : ""}`} />
-              </button>
-
-              {/* Language Dropdown Menu */}
-              {langOpen && (
-                <div className="absolute right-0 top-full mt-2 w-36 bg-white dark:bg-[#0c0c16] border border-gray-200 dark:border-white/10 rounded-xl shadow-lg dark:shadow-[0_8px_32px_rgba(0,0,0,0.5)] overflow-hidden z-50">
-                  <div className="p-1.5 flex flex-col gap-1">
-                    <button
-                      onClick={() => {
-                        setLanguage("en");
-                        setLangOpen(false);
-                      }}
-                      className={`w-full text-left px-3 py-2 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
-                        language === "en"
-                          ? "bg-tech-teal-500/10 text-tech-teal-600 dark:text-tech-teal-400"
-                          : "hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300"
-                      }`}
-                    >
-                      English
-                    </button>
-                    <button
-                      onClick={() => {
-                        setLanguage("te");
-                        setLangOpen(false);
-                      }}
-                      className={`w-full text-left px-3 py-2 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
-                        language === "te"
-                          ? "bg-tech-teal-500/10 text-tech-teal-600 dark:text-tech-teal-400"
-                          : "hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300"
-                      }`}
-                    >
-                      తెలుగు (Telugu)
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -266,35 +214,6 @@ export const Navbar: React.FC = () => {
               {t("b2b_portal")}
             </Link>
           )}
-
-          <hr className="border-white/10 my-1" />
-          
-          {/* Mobile Language Selector */}
-          <div className="flex justify-between items-center py-1">
-            <span className="text-xs text-gray-400">Language / భాష</span>
-            <div className="flex gap-1.5">
-              <button
-                onClick={() => setLanguage("en")}
-                className={`px-2.5 py-1 text-xs font-semibold rounded-md border cursor-pointer transition-colors ${
-                  language === "en"
-                    ? "bg-tech-teal-500/10 border-tech-teal-500/30 text-tech-teal-400"
-                    : "border-white/10 text-gray-400 hover:text-white"
-                }`}
-              >
-                EN
-              </button>
-              <button
-                onClick={() => setLanguage("te")}
-                className={`px-2.5 py-1 text-xs font-semibold rounded-md border cursor-pointer transition-colors ${
-                  language === "te"
-                    ? "bg-tech-teal-500/10 border-tech-teal-500/30 text-tech-teal-400"
-                    : "border-white/10 text-gray-400 hover:text-white"
-                }`}
-              >
-                తెలుగు
-              </button>
-            </div>
-          </div>
 
           <hr className="border-white/10 my-1" />
           
